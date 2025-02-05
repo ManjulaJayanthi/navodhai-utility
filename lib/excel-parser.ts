@@ -63,7 +63,7 @@ export async function parseExcelFile(file: File): Promise<ProductData[]> {
           }
           
           // Clean and validate string fields
-          const cleanString = (value: any) => {
+          const cleanString = (value: string | number | null | undefined) => {
             if (value === undefined || value === null) return '';
             return String(value).trim();
           };
