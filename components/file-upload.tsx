@@ -1,30 +1,39 @@
-import { UploadCloud } from "lucide-react"
-import { useCallback, useState } from "react"
-import { useDropzone } from "react-dropzone"
-import { Card } from "./ui/card"
-import { cn } from "@/lib/utils"
+import { UploadCloud } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { Card } from './ui/card';
+import { cn } from '@/lib/utils';
 
 interface FileUploadProps {
-  onFileUpload: (file: File) => void
-  accept?: Record<string, string[]>
+  onFileUpload: (file: File) => void;
+  accept?: Record<string, string[]>;
 }
 
-export function FileUpload({ onFileUpload, accept = {
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-  'text/csv': ['.csv']
-} }: FileUploadProps) {
-  const [isDragging, setIsDragging] = useState(false)
+export function FileUpload({
+  onFileUpload,
+  accept = {
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
+      '.xlsx',
+    ],
+    'text/csv': ['.csv'],
+  },
+}: FileUploadProps) {
+  const [isDragging, setIsDragging] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles?.length > 0) {
-      const file = acceptedFiles[0]
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
-        alert("File size too large. Please upload a file smaller than 10MB")
-        return
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles?.length > 0) {
+        const file = acceptedFiles[0];
+        if (file.size > 10 * 1024 * 1024) {
+          // 10MB limit
+          alert('File size too large. Please upload a file smaller than 10MB');
+          return;
+        }
+        onFileUpload(file);
       }
-      onFileUpload(file)
-    }
-  }, [onFileUpload])
+    },
+    [onFileUpload]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -32,14 +41,14 @@ export function FileUpload({ onFileUpload, accept = {
     maxFiles: 1,
     onDragEnter: () => setIsDragging(true),
     onDragLeave: () => setIsDragging(false),
-  })
+  });
 
   return (
     <Card
       {...getRootProps()}
       className={cn(
-        "border-2 border-dashed p-8 hover:border-primary/50 transition-colors cursor-pointer",
-        isDragging && "border-primary/50 bg-primary/5"
+        'border-2 border-dashed p-8 hover:border-primary/50 transition-colors cursor-pointer',
+        isDragging && 'border-primary/50 bg-primary/5'
       )}
     >
       <input {...getInputProps()} />
@@ -49,5 +58,5 @@ export function FileUpload({ onFileUpload, accept = {
         <p className="text-sm">Supports .xlsx and .csv files up to 10MB</p>
       </div>
     </Card>
-  )
+  );
 }
