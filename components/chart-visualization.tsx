@@ -39,6 +39,7 @@ export function ChartVisualization({
           return {
             [xAxis]: xValue.trim() || 'Unknown',
             [yAxis]: isNaN(yValue) ? 0 : yValue,
+            link: item.link, // Add link to chart data
           } as Record<string, string | number>;
         })
         .filter((item) => Number(item[yAxis]) > 0);
@@ -129,6 +130,50 @@ export function ChartVisualization({
               showLegend={true}
               valueFormatter={(value) => value.toLocaleString()}
               curveType="monotone"
+              onValueChange={(v) => {
+                if (v?.link) {
+                  window.open(v.link as string, '_blank');
+                }
+              }}
+              showTooltip={true}
+              customTooltip={({ payload }) => {
+                if (!payload?.[0]?.payload) return null;
+                const data = payload[0].payload;
+                return (
+                  <div className="bg-white p-5 rounded-xl shadow-lg border border-gray-200 min-w-[250px]">
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+                          {xAxis}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {data[xAxis]}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+                          {yAxis}
+                        </div>
+                        <div className="text-lg font-medium text-gray-900">
+                          {Number(data[yAxis]).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                    {data.link && (
+                      <div className="mt-4 pt-3 border-t border-gray-200">
+                        <a
+                          href={data.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 underline text-sm"
+                        >
+                          View Details →
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                );
+              }}
             />
           )}
         </div>
