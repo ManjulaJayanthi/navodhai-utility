@@ -56,7 +56,7 @@ export default function Home() {
   const [xAxis] = useState<keyof ProductData>('id');
   const [yAxis, setYAxis] = useState<keyof ProductData>('price');
   const [showChart, setShowChart] = useState(false);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'none'>('none');
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -85,8 +85,11 @@ export default function Home() {
       });
     }
 
-    // Sort data based on Y axis if it's numeric or size
-    if (yAxis === 'price' || yAxis === 'sell' || yAxis === 'size') {
+    // Sort data based on Y axis if it's numeric or size and sort order is not none
+    if (
+      (yAxis === 'price' || yAxis === 'sell' || yAxis === 'size') &&
+      sortOrder !== 'none'
+    ) {
       filtered.sort((a, b) => {
         const aValue = yAxis === 'size' ? a[yAxis] : Number(a[yAxis]);
         const bValue = yAxis === 'size' ? b[yAxis] : Number(b[yAxis]);
@@ -160,12 +163,15 @@ export default function Home() {
               <label className="text-sm font-medium">Sort Order</label>
               <Select
                 value={sortOrder}
-                onValueChange={(value: 'asc' | 'desc') => setSortOrder(value)}
+                onValueChange={(value: 'asc' | 'desc' | 'none') =>
+                  setSortOrder(value)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select sort order" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
                   <SelectItem value="asc">Ascending</SelectItem>
                   <SelectItem value="desc">Descending</SelectItem>
                 </SelectContent>
